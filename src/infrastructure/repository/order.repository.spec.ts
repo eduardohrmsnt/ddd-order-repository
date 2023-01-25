@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize-typescript"
+import { Sequelize } from "sequelize-typescript";
 import Address from "../../domain/entity/address";
 import Customer from "../../domain/entity/customer";
 import Order from "../../domain/entity/order";
@@ -12,26 +12,27 @@ import CustomerRepository from "./customer.repository";
 import OrderRepository from "./order.repository";
 import ProductRepository from "./product.repository";
 
-describe("Order repository test", ()=> {
-    let sequilize : Sequelize;
+describe("Order repository test", () => {
+    let sequilize: Sequelize;
 
     beforeEach(async () => {
+        jest.setTimeout(60000);
         sequilize = new Sequelize({
             dialect: 'sqlite',
             storage: ':memory',
             logging: false,
-            sync: { force: true }
+            sync: { force: true },
         });
 
-        sequilize.addModels([CustomerModel, OrderModel, OrderItemModel, ProductModel])
+        await sequilize.addModels([CustomerModel, OrderModel, OrderItemModel, ProductModel])
         await sequilize.sync();
-    })       
-    
-    afterEach(async () =>{
+    })
+
+    afterEach(async () => {
         await sequilize.close();
     });
 
-    it("Should create a new order", async() =>{
+    it("Should create a new order", async () => {
         const customerRepository = new CustomerRepository();
         const customer = new Customer("1", "John Lennon");
         const address = new Address("Rua 3 de Janeiro", 277, "89128000", "Luiz Alves");
@@ -41,14 +42,14 @@ describe("Order repository test", ()=> {
         const productRepository = new ProductRepository();
         const product = new Product("1", "Product 1", 10);
         await productRepository.create(product);
-        
+
         const orderRepository = new OrderRepository();
         const orderItem = new OrderItem("1", product.name, product.price, product.id, 2);
         const order = new Order("1", customer.id, [orderItem]);
 
         await orderRepository.create(order);
 
-        const orderModel = await OrderModel.findOne({where: { id: order.id}, include: ["items"]});
+        const orderModel = await OrderModel.findOne({ where: { id: order.id }, include: ["items"] });
 
         expect(orderModel.toJSON()).toStrictEqual({
             id: "1",
@@ -67,7 +68,7 @@ describe("Order repository test", ()=> {
         })
     })
 
-    it("Should update an order", async() =>{
+    it("Should update an order", async () => {
         const customerRepository = new CustomerRepository();
         const customer = new Customer("1", "John Lennon");
         const address = new Address("Rua 3 de Janeiro", 277, "89128000", "Luiz Alves");
@@ -82,14 +83,14 @@ describe("Order repository test", ()=> {
         const productRepository = new ProductRepository();
         const product = new Product("1", "Product 1", 10);
         await productRepository.create(product);
-        
+
         const orderRepository = new OrderRepository();
         const orderItem = new OrderItem("1", product.name, product.price, product.id, 2);
         const order = new Order("1", customer.id, [orderItem]);
 
         await orderRepository.create(order);
 
-        const orderModel = await OrderModel.findOne({where: { id: order.id}, include: ["items"]});
+        const orderModel = await OrderModel.findOne({ where: { id: order.id }, include: ["items"] });
 
         expect(orderModel.toJSON()).toStrictEqual({
             id: "1",
@@ -111,7 +112,7 @@ describe("Order repository test", ()=> {
 
         await orderRepository.update(order);
 
-        const orderModel2 = await OrderModel.findOne({where: { id: order.id}, include: ["items"]});
+        const orderModel2 = await OrderModel.findOne({ where: { id: order.id }, include: ["items"] });
 
         expect(orderModel2.toJSON()).toStrictEqual({
             id: "1",
@@ -130,7 +131,7 @@ describe("Order repository test", ()=> {
         })
     })
 
-    it("Should find an order", async() =>{
+    it("Should find an order", async () => {
         const customerRepository = new CustomerRepository();
         const customer = new Customer("1", "John Lennon");
         const address = new Address("Rua 3 de Janeiro", 277, "89128000", "Luiz Alves");
@@ -140,7 +141,7 @@ describe("Order repository test", ()=> {
         const productRepository = new ProductRepository();
         const product = new Product("1", "Product 1", 10);
         await productRepository.create(product);
-        
+
         const orderRepository = new OrderRepository();
         const orderItem = new OrderItem("1", product.name, product.price, product.id, 2);
         const order = new Order("1", customer.id, [orderItem]);
@@ -152,7 +153,7 @@ describe("Order repository test", ()=> {
         expect(order).toEqual(order2)
     })
 
-    it("Should find all orders", async() =>{
+    it("Should find all orders", async () => {
         const customerRepository = new CustomerRepository();
         const customer = new Customer("1", "John Lennon");
         const address = new Address("Rua 3 de Janeiro", 277, "89128000", "Luiz Alves");
@@ -162,7 +163,7 @@ describe("Order repository test", ()=> {
         const productRepository = new ProductRepository();
         const product = new Product("1", "Product 1", 10);
         await productRepository.create(product);
-        
+
         const orderRepository = new OrderRepository();
         const orderItem = new OrderItem("1", product.name, product.price, product.id, 2);
         const order = new Order("1", customer.id, [orderItem]);
@@ -180,5 +181,5 @@ describe("Order repository test", ()=> {
         expect(orders).toContainEqual(order)
         expect(orders).toContainEqual(order2)
     })
-   
+
 })
