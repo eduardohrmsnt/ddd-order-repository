@@ -29,6 +29,7 @@ describe("Order repository test", () => {
     })
 
     afterEach(async () => {
+        await sequilize.drop();
         await sequilize.close();
     });
 
