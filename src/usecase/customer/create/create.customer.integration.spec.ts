@@ -21,7 +21,7 @@ describe("Integration test create customer use case", () => {
         jest.setTimeout(60000);
         sequilize = new Sequelize({
             dialect: 'sqlite',
-            storage: ':memory',
+            storage: ':memory:',
             logging: false,
             sync: { force: true }
         });
@@ -61,7 +61,7 @@ describe("Integration test create customer use case", () => {
 
         input.name = "";
 
-        await expect(customerCreateUseCase.execute(input)).rejects.toThrow("Name is Required");
+        await expect(customerCreateUseCase.execute(input)).rejects.toThrow("customer: Name is required");
     })
 
 

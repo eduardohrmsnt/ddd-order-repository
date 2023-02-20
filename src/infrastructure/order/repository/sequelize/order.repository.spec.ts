@@ -20,7 +20,7 @@ describe("Order repository test", () => {
         jest.setTimeout(60000);
         sequilize = new Sequelize({
             dialect: 'sqlite',
-            storage: ':memory',
+            storage: ':memory:',
             logging: false,
             sync: { force: true },
         });
